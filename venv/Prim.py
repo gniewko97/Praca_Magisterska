@@ -1,0 +1,56 @@
+from fibheap import *
+
+class Graf:
+    def __init__(self, wielkosc):
+        self.V = wielkosc
+        self.graf = []
+        self.przyleglosc = [[0 for col in range(wielkosc)] for row in range(wielkosc)]
+        self.do_odw = makefheap()
+
+    def dod_kraw(self, u, v, w):
+        self.graf.append([u, v, w])
+        self.przyleglosc[u][v] = w
+        self.przyleglosc[v][u] = w
+
+    def zbadaj_kraw(self,do_odw,v):
+        for e in range(self.V):
+            if self.przyleglosc[v][e] != 0:
+                fheappush(do_odw,[self.przyleglosc[v][e],v,e])
+
+    def Prim(self):
+        wynik = []
+        suma = 0
+        odw_wierzcholki = [0 for col in range(self.V)]
+        pol_wierzcholki = 0
+        odw_wierzcholki[0] = True
+        self.zbadaj_kraw(self.do_odw, 0)
+        while pol_wierzcholki < self.V -1:
+            kraw = fheappop(self.do_odw)
+            if not odw_wierzcholki[kraw[2]]:
+                odw_wierzcholki[kraw[2]] = True
+                wynik.append([kraw[1],kraw[2],kraw[0]])
+                pol_wierzcholki +=1
+                self.zbadaj_kraw(self.do_odw,kraw[2])
+        for u, v, w in wynik:
+            print("Krawedz:", u, v, end=" ")
+            print("-", w)
+            suma += w
+        print("Wielkość MSP:", suma)
+
+# Odczyt z pliku i dostosowanie zawartości do działania programu
+my_file = open("losowy_graf.txt", "r")
+content_list = my_file.read().splitlines()
+fin_list = []
+for i in content_list:
+    fin_list.append(i.split(','))
+    
+flag = 0
+
+for line in fin_list:
+    if flag == 0:
+        g = Graf(int(line[0]))
+        flag = 1
+    else:
+        g.dod_kraw(int(line[0])-1,int(line[1])-1,int(line[2]))
+
+g.Prim()
