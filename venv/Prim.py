@@ -3,19 +3,25 @@ from fibheap import *
 class Graf:
     def __init__(self, wielkosc):
         self.V = wielkosc
-        self.graf = []
-        self.przyleglosc = [[0 for col in range(wielkosc)] for row in range(wielkosc)]
+        self.kraw = {}
+        self.przyleglosc = {}
         self.do_odw = makefheap()
 
     def dod_kraw(self, u, v, w):
-        self.graf.append([u, v, w])
-        self.przyleglosc[u][v] = w
-        self.przyleglosc[v][u] = w
+        self.kraw[u, v] = w
+        self.kraw[v, u] = w
+        if u not in self.przyleglosc:
+            self.przyleglosc[u] = [v]
+        elif v not in self.przyleglosc[u]:
+            self.przyleglosc[u].append(v)
+        if v not in self.przyleglosc:
+            self.przyleglosc[v] = [u]
+        elif u not in self.przyleglosc[v]:
+            self.przyleglosc[v].append(u)
 
     def zbadaj_kraw(self,do_odw,v):
-        for e in range(self.V):
-            if self.przyleglosc[v][e] != 0:
-                fheappush(do_odw,[self.przyleglosc[v][e],v,e])
+        for e in self.przyleglosc[v]:
+            fheappush(do_odw,[self.kraw[v,e],v,e])
 
     def Prim(self):
         wynik = []

@@ -6,14 +6,15 @@ class Graf:
     def dod_kraw(self, u, v, w):
         self.graf.append([u, v, w])
 
-    def szukaj(self, zbior, i):
+    def szukaj(self, zbior, i, o):
         if zbior[i] == i:
+            zbior[o] = i
             return i
-        return self.szukaj(zbior, zbior[i])
+        return self.szukaj(zbior, zbior[i], o)
 
     def zlacz(self, zbior, poziom, x, y):
-        xk = self.szukaj(zbior, x)
-        yk = self.szukaj(zbior, y)
+        xk = self.szukaj(zbior, x, x)
+        yk = self.szukaj(zbior, y, y)
         if poziom[xk] < poziom[yk]:
             zbior[xk] = yk
         elif poziom[xk] > poziom[yk]:
@@ -35,8 +36,8 @@ class Graf:
         while e < self.V - 1:
             u, v, w = self.graf[i]
             i = i + 1
-            x = self.szukaj(zbior, u)
-            y = self.szukaj(zbior, v)
+            x = self.szukaj(zbior, u, u)
+            y = self.szukaj(zbior, v, v)
             if x != y:
                 e = e + 1
                 wynik.append([u, v, w])
