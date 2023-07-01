@@ -1,3 +1,8 @@
+import time
+import tracemalloc
+
+#licznik = 1
+
 class Graf:
     def __init__(self, wieloksc):
         self.V = wieloksc
@@ -42,27 +47,51 @@ class Graf:
                 e = e + 1
                 wynik.append([u, v, w])
                 self.zlacz(zbior, poziom, x, y)
-        for u, v, w in wynik:
-            print("Krawedz:", u, v, end=" ")
-            print("-", w)
-            suma += w
-        print("Wielkość MSP:",suma)
+        # for u, v, w in wynik:
+        #     print("Krawedz:", u, v, end=" ")
+        #     print("-", w)
+        #     suma += w
+        # print("Wielkość MSP:",suma)
+        #print(licznik)
 
 
-# Odczyt z pliku i dostosowanie zawartości do działania programu
-my_file = open("losowy_graf.txt", "r")
-content_list = my_file.read().splitlines()
-fin_list = []
-for i in content_list:
-    fin_list.append(i.split(','))
+#Parametry do odczytu z grafu i czasu i pamieci
+jakie_n = 'nsqrt(n)'
+ilosc_wierzcholkow =[200, 500, 1_000, 2_000, 5_000, 10_000]
+# ilosc_wierzcholkow =[10_000]
+czas, pamiec = [], []
+licznik = 0
 
-flag = 0
+for j in range(0, len(ilosc_wierzcholkow)):
+    czas, pamiec = [], []
+    licznik = 0
+    for i in range(1, 51):
+        # Odczyt z pliku i dostosowanie zawartości do działania programu
+        my_file = open("grafy/"+str(jakie_n)+"/"+str(ilosc_wierzcholkow[j])+"/graf"+str(i), "r")
+        content_list = my_file.read().splitlines()
+        fin_list = []
+        for i in content_list:
+            fin_list.append(i.split(','))
 
-for line in fin_list:
-    if flag == 0:
-        g = Graf(int(line[0]))
-        flag = 1
-    else:
-        g.dod_kraw(int(line[0]) - 1, int(line[1]) - 1, int(line[2]))
-        
-g.kruskal()
+        flag = 0
+
+        for line in fin_list:
+            if flag == 0:
+                g = Graf(int(line[0]))
+                flag = 1
+            else:
+                g.dod_kraw(int(line[0]) - 1, int(line[1]) - 1, int(line[2]))
+
+
+        startTime = time.time()
+        tracemalloc.start()
+        g.kruskal()
+        pamiec.append(tracemalloc.get_traced_memory()[1])
+        czas.append((time.time() - startTime))
+        tracemalloc.stop()
+        licznik += 1
+        print(licznik)
+
+    print(ilosc_wierzcholkow[j])
+    print('czas: ', sum(czas)/len(czas))
+    print('pamiec: ', sum(pamiec)/len(pamiec))
