@@ -51,7 +51,7 @@ class Graf:
 #         print("Wielkość MSP:", suma)
 #
 # # Odczyt z pliku i dostosowanie zawartości do działania programu
-# my_file = open("grafy/5n/200/graf1", "r")
+# my_file = open("grafy/5n/5000/graf1", "r")
 # content_list = my_file.read().splitlines()
 # fin_list = []
 # for i in content_list:
@@ -69,7 +69,7 @@ class Graf:
 # g.Prim()
 
 #Parametry do odczytu z grafu i czasu i pamieci
-jakie_n = 'n'
+jakie_n = 3
 ilosc_wierzcholkow =[200, 500, 1_000, 2_000, 5_000, 10_000]
 czas, pamiec = [], []
 

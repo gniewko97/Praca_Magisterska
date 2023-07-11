@@ -25,6 +25,7 @@ class Graf:
         self.drzewa = {}
         #słownik zawierający referencje do obiektów kopca do obniżania klucza
         self.kopiec_obiekt = {}
+        #zmienna kontrolująca liczbę wierzchołków w kopcu
 
 
     def dod_kraw(self, u, v, w): #Funkcja dodająca krawędzie do grafu, oraz ustawiająca ich sąsiadów
@@ -78,7 +79,7 @@ class Graf:
         wyniki = 0
         suma = 0 #zmienna z kosztem końcowym wyniku
         odw_wierzcholki = 1 #licznik ile wierzchołków zostało już zbadanych w danym cyklu na początku jest 1 ponieważ zaczynamy z losowym wierzchołkiem
-        pol_wierzcholki = 0 #licznik ile wierzchołków zostało dodanych do własnie tworzonego drzewa
+        #pol_wierzcholki = 0 #licznik ile wierzchołków zostało dodanych do własnie tworzonego drzewa
         liczba_drzew = self.V #licznik ile drzew jest w grafie po poprzednim cyklu
         org_liczba_kraw = len(self.kraw) #licznik ile krawędzi było w początkowym grafie
         k = decimal.Decimal(numpy.power(decimal.Decimal(2), decimal.Decimal(2) * decimal.Decimal(org_liczba_kraw) / decimal.Decimal(liczba_drzew))) #wyliczenie startowego k
@@ -101,10 +102,11 @@ class Graf:
             while odw_wierzcholki <= liczba_drzew - 1: #każdy cykl trwa dopóki nie odwiedzisz każdego wierzchołka/drzewa w grafie
 
                 # jeżeli liczba dodanych wierzchołków staje się większa niż k przerywaj rozrost
-                if pol_wierzcholki > k:
+                #print(self.do_odw.num_nodes)
+                if self.do_odw.num_nodes > k:
                     # print('Nowe drzewo')
                     # print("")
-                    pol_wierzcholki = 0 #zerowanie licznika
+                    # pol_wierzcholki = 0 #zerowanie licznika
                     self.do_odw = makefheap()
                     for a in self.drzewa:
                         self.drzewa[a][0] = float('inf')
@@ -145,7 +147,8 @@ class Graf:
                 #print('napotkane drzewo', self.drzewa[self.wierzcholki_do_drzew[u[2]]])
                 if self.drzewa[self.wierzcholki_do_drzew[u[2]]][1]: #jeżeli drzewo zostało już odwiedzone
                     # print('lacze drzewa')
-                    pol_wierzcholki = k + 1 #wymuszamy w kolejnym obrocie pętli zaczęcie rozrastania nowego drzewa
+                    #pol_wierzcholki = k + 1 #wymuszamy w kolejnym obrocie pętli zaczęcie rozrastania nowego drzewa
+                    self.do_odw.num_nodes = k + 1
                     #self.wierzcholki_do_drzew[u[1]] = self.wierzcholki_do_drzew[u[2]]
                     stare_drzewo = self.wierzcholki_do_drzew[u[2]] #do jakiego drzewa należy właśnie dodany wierzchołek
                     for d in self.drzewa_do_wierzcholkow[max_nr_drzewa]: #wszystkie wierzchołki własnie rozrastanego drzewa dodajemy do starego właśnie napotkanego drzewa
@@ -157,7 +160,7 @@ class Graf:
                 else:
                     self.drzewa[self.wierzcholki_do_drzew[u[2]]][1] = True #oznaczamy drzewo jako zbadane
                     self.zbadaj_kraw(u[2], max_nr_drzewa) #dodaj do kopca sąsiadów właśnie dodanego wierzchołka
-                    pol_wierzcholki += 1
+                    #pol_wierzcholki += 1
                     del nieodw_drzewa[u[2]]
                     self.wierzcholki_do_drzew[u[2]] = max_nr_drzewa
                     odw_wierzcholki += 1
@@ -197,7 +200,7 @@ class Graf:
             self.kopiec_obiekt = {}
             nieodw_drzewa = {}  # słownik zawierający nieodwiedzone jeszcze w tym cyklu wierzchołki
             odw_wierzcholki = 1  # licznik ile wierzchołków zostało już zbadanych w danym cyklu na początku jest 1 ponieważ zaczynamy z losowym wierzchołkiem
-            pol_wierzcholki = 0  # licznik ile wierzchołków zostało dodanych do własnie tworzonego drzewa
+            #pol_wierzcholki = 0  # licznik ile wierzchołków zostało dodanych do własnie tworzonego drzewa
             aktualne_drzewo = 1  # licznik które drzewo z cyklu jest aktualnie rozrastane
             self.wierzcholki_do_drzew = {}
             self.drzewa_do_wierzcholkow = {}
@@ -213,16 +216,16 @@ class Graf:
             del nieodw_drzewa[max_nr_drzewa - 1]
 
 
-        # #wypisanie wyniku
-        # for u, v, w in wynik:
-        #     print("Krawedz:", u, v, end=" ")
-        #     print("-", w)
-        #     suma += w
-        # print("Wielkość MSP:", suma)
-
-
+#         #wypisanie wyniku
+#         for u, v, w in wynik:
+#             print("Krawedz:", u, v, end=" ")
+#             print("-", w)
+#             suma += w
+#         print("Wielkość MSP:", suma)
+#
+#
 # # Odczyt z pliku i dostosowanie zawartości do działania programu
-# my_file = open("grafy/5n/200/graf1", "r")
+# my_file = open("grafy/5n/5000/graf1", "r")
 # content_list = my_file.read().splitlines()
 # fin_list = []
 # for i in content_list:
@@ -241,9 +244,9 @@ class Graf:
 # czas, pamiec = [], []
 
 #Parametry do odczytu z grafu i czasu i pamieci
-jakie_n = 'n'
-ilosc_wierzcholkow =[200, 500, 1_000, 2_000, 5_000, 10_000]
-#ilosc_wierzcholkow =[10_000]
+jakie_n = "nsqrt(n)"
+# ilosc_wierzcholkow =[200, 500, 1_000, 2_000, 5_000, 10_000]
+ilosc_wierzcholkow =[10_000]
 czas, pamiec = [], []
 
 for j in range(0, len(ilosc_wierzcholkow)):
@@ -251,7 +254,7 @@ for j in range(0, len(ilosc_wierzcholkow)):
     licznik = 0
     for i in range(1, 51):
         # Odczyt z pliku i dostosowanie zawartości do działania programu
-        my_file = open("grafy/"+str(jakie_n)+"n/"+str(ilosc_wierzcholkow[j])+"/graf"+str(i), "r")
+        my_file = open("grafy/"+str(jakie_n)+"/"+str(ilosc_wierzcholkow[j])+"/graf"+str(i), "r")
         content_list = my_file.read().splitlines()
         fin_list = []
         for i in content_list:
